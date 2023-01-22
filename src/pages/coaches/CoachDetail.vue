@@ -22,6 +22,7 @@
         :type="area"
         :title="area"
       ></base-badge>
+      <p>{{ description }}</p>
     </base-card>
   </section>
 </template>
@@ -46,6 +47,9 @@ export default {
     },
     areas() {
       return this.selectedCoach.areas;
+    },
+    description() {
+      return this.selectedCoach.description;
     },
   },
   created() {
