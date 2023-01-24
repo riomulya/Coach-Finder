@@ -36,6 +36,11 @@ export default {
       formIsValid: true,
     };
   },
+  computed: {
+    requests() {
+      return this.$store.getters['requests/requests'];
+    },
+  },
   methods: {
     clearValidity(input) {
       this[input].isValid = true;
@@ -44,7 +49,7 @@ export default {
       }
     },
     formValidity() {
-      if (!this.email.val || this.email.val.includes('@')) {
+      if (!this.email.val && !this.email.val.includes('@')) {
         this.email.isValid = false;
         this.formIsValid = false;
       }
@@ -58,6 +63,13 @@ export default {
       if (!this.formIsValid) {
         return;
       }
+      this.$store.dispatch('requests/contactCoach', {
+        email: this.email.val,
+        message: this.message.val,
+        coachId: this.$route.params.id,
+      });
+      this.$router.replace('/');
+      console.log(this.requests);
     },
   },
 };
