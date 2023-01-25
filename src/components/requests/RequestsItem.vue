@@ -21,26 +21,22 @@ export default {
 <style scoped>
 li {
   margin: 1rem 0;
-  border: 1px solid #424242;
-  border-radius: 12px;
+  border: 1px solid #ccc;
   padding: 1rem;
 }
 
-h3 {
-  font-size: 1.5rem;
+a {
+  color: #3d008d;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-h3,
-h4 {
-  margin: 0.5rem 0;
+a:hover,
+a:active {
+  color: #8d007a;
 }
 
-div {
-  margin: 0.5rem 0;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
+p {
+  margin: 0.5rem 0 0 0;
 }
 </style>

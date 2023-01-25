@@ -1,7 +1,7 @@
 <template>
   <section>
     <base-card>
-      <div v-if="!requestsIsEmpty">
+      <div v-if="hasRequests">
         <header>
           <h2>Requests Received</h2>
         </header>
@@ -17,7 +17,7 @@
           </requests-item>
         </ul>
       </div>
-      <h3 v-if="requestsIsEmpty">You Haven't Received Any Requests</h3>
+      <h3 v-if="!hasRequests">You Haven't Received Any Requests</h3>
     </base-card>
   </section>
 </template>
@@ -39,11 +39,8 @@ export default {
     requests() {
       return this.$store.getters['requests/requests'];
     },
-    requestsIsEmpty() {
-      if (this.requests.length === 0) {
-        return true;
-      }
-      return false;
+    hasRequests() {
+      return this.$store.getters['requests/hasRequests'];
     },
     message() {
       return this.coaches.message;
