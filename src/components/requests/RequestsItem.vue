@@ -1,7 +1,6 @@
 <template>
   <li>
     From :<a :href="emailRequestLink"> {{ userEmail }}</a>
-    <p>To : {{ coachName }}</p>
     <h4>Message :</h4>
     <p>{{ message }}</p>
   </li>

@@ -1,7 +1,14 @@
 <template>
   <section>
+    <base-dialog
+      :show="!!error"
+      title="Failed to Fetch Request"
+      @close="handleError"
+      >{{ error }}</base-dialog
+    >
     <base-card>
-      <div v-if="hasRequests">
+      <base-spinner v-if="isLoading"></base-spinner>
+      <div v-else-if="hasRequests">
         <header>
           <h2>Requests Received</h2>
         </header>
@@ -10,14 +17,13 @@
             v-for="req in requests"
             :key="req.id"
             :id="req.id"
-            :coachName="setCoachName(req.coachId)"
             :message="req.message"
             :userEmail="req.userEmail"
           >
           </requests-item>
         </ul>
       </div>
-      <h3 v-if="!hasRequests">You Haven't Received Any Requests</h3>
+      <h3 v-else-if="!hasRequests">You Haven't Received Any Requests</h3>
     </base-card>
   </section>
 </template>
@@ -26,11 +32,14 @@
 import RequestsItem from '../../components/requests/RequestsItem.vue';
 
 export default {
+  data() {
+    return {
+      error: null,
+      isLoading: false,
+    };
+  },
   components: {
     RequestsItem,
-  },
-  data() {
-    return {};
   },
   computed: {
     coaches() {
@@ -40,16 +49,27 @@ export default {
       return this.$store.getters['requests/requests'];
     },
     hasRequests() {
-      return this.$store.getters['requests/hasRequests'];
+      return !this.isLoading && this.$store.getters['requests/hasRequests'];
     },
     message() {
-      return this.coaches.message;
+      return this.requests.message;
     },
   },
+  created() {
+    this.loadRequests();
+  },
   methods: {
-    setCoachName(coachId) {
-      const filteredCoach = this.coaches.find((coach) => coach.id === coachId);
-      return filteredCoach.firstName + ' ' + filteredCoach.lastName;
+    async loadRequests() {
+      this.isLoading = true;
+      try {
+        await this.$store.dispatch('requests/fetchRequests');
+      } catch (error) {
+        this.error = error.message;
+      }
+      this.isLoading = false;
+    },
+    handleError() {
+      this.error = null;
     },
   },
 };

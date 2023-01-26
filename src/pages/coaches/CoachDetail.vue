@@ -1,36 +1,45 @@
 <template>
-  <section>
-    <base-card>
-      <h2>{{ fullName }}</h2>
-      <h3>${{ rate }}/hour</h3>
-    </base-card>
-  </section>
-  <section>
-    <base-card>
-      <header>
-        <h2>Interested? Reach out Now!!!</h2>
-        <base-button link :to="contactLink">Contact</base-button>
-      </header>
-      <router-view></router-view>
-    </base-card>
-  </section>
-  <section>
-    <base-card>
-      <base-badge
-        v-for="area in areas"
-        :key="area"
-        :type="area"
-        :title="area"
-      ></base-badge>
-      <p>{{ description }}</p>
-    </base-card>
-  </section>
+  <div>
+    <section>
+      <base-card>
+        <h2>{{ fullName }}</h2>
+        <h3>${{ rate }}/hour</h3>
+      </base-card>
+    </section>
+    <section>
+      <base-card>
+        <header>
+          <h2>Interested? Reach out Now!!!</h2>
+          <base-button
+            link
+            :to="contactLink"
+            v-if="contactDisplay"
+            @click="setDisplay"
+            >Contact</base-button
+          >
+        </header>
+        <router-view></router-view>
+      </base-card>
+    </section>
+    <section>
+      <base-card>
+        <base-badge
+          v-for="area in areas"
+          :key="area"
+          :type="area"
+          :title="area"
+        ></base-badge>
+        <p>{{ description }}</p>
+      </base-card>
+    </section>
+  </div>
 </template>
 
 <script lang="js">
 export default {
   data() {
     return {
+      contactDisplay:true,
       selectedCoach: null,
     };
   },
@@ -57,5 +66,10 @@ export default {
       (coach) => coach.id === this.id
     );
   },
+  methods:{
+    setDisplay(){
+      this.contactDisplay = !this.contactDisplay
+    }
+  }
 };
 </script>
