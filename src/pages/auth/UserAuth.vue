@@ -1,30 +1,41 @@
 <template>
-  <base-card>
-    <form @submit.prevent="submitData">
-      <div class="form-control" :class="{ errors: !formIsValid }">
-        <label for="email">E-mail</label>
-        <input type="email" id="email" v-model.trim="email" />
-      </div>
-      <div class="form-control" :class="{ errors: !formIsValid }">
-        <label for="password">Password</label>
-        <input type="password" id="password" v-model.trim="password" />
-      </div>
-      <transition name="confirm" :class="{ errors: !formIsValid }">
-        <div class="form-control" v-if="authMode === 'signup'">
-          <label for="confirm-password">Confirm Password</label>
-          <input
-            type="password"
-            id="confirm-password"
-            v-model.trim="confirmPassword"
-          />
+  <div>
+    <base-dialog
+      :show="!!error"
+      @close="handleError"
+      title="An error occured"
+      >{{ error }}</base-dialog
+    >
+    <base-dialog :show="isLoading" fixed title="Authenticating...">
+      <base-spinner></base-spinner>
+    </base-dialog>
+    <base-card>
+      <form @submit.prevent="submitData">
+        <div class="form-control" :class="{ errors: !formIsValid }">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" v-model.trim="email" />
         </div>
-      </transition>
-      <base-button>{{ setAuthStr }}</base-button>
-      <base-button type="button" mode="outline" @click="switchAuthMode">{{
-        setSwitchAuthStr
-      }}</base-button>
-    </form>
-  </base-card>
+        <div class="form-control" :class="{ errors: !formIsValid }">
+          <label for="password">Password</label>
+          <input type="password" id="password" v-model.trim="password" />
+        </div>
+        <transition name="confirm" :class="{ errors: !formIsValid }">
+          <div class="form-control" v-if="authMode === 'signup'">
+            <label for="confirm-password">Confirm Password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              v-model.trim="confirmPassword"
+            />
+          </div>
+        </transition>
+        <base-button>{{ setAuthStr }}</base-button>
+        <base-button type="button" mode="outline" @click="switchAuthMode">{{
+          setSwitchAuthStr
+        }}</base-button>
+      </form>
+    </base-card>
+  </div>
 </template>
 
 <script>
@@ -37,6 +48,8 @@ export default {
       authMode: 'login',
       switchAuth: 'signup',
       formIsValid: true,
+      isLoading: false,
+      error: null,
     };
   },
   computed: {
@@ -50,7 +63,7 @@ export default {
     },
   },
   methods: {
-    submitData() {
+    async submitData() {
       if (this.authMode === 'login') {
         this.submitLogin();
       } else {
@@ -66,7 +79,8 @@ export default {
         this.switchAuth = 'signup';
       }
     },
-    submitLogin() {
+    async submitLogin() {
+      this.isLoading = true;
       this.formIsValid = true;
       if (
         !this.email ||
@@ -76,11 +90,21 @@ export default {
         this.formIsValid = false;
         return;
       }
+      try {
+        await this.$store.dispatch('signIn', {
+          email: this.email,
+          password: this.password,
+        });
+      } catch (error) {
+        this.error = error.message;
+      }
       this.email = '';
       this.password = '';
+      this.isLoading = false;
     },
-    submitSignUp() {
+    async submitSignUp() {
       this.formIsValid = true;
+      this.isLoading = true;
       if (
         !this.email ||
         !this.email.includes('@') ||
@@ -91,9 +115,21 @@ export default {
         this.formIsValid = false;
         return;
       }
+      try {
+        await this.$store.dispatch('signUp', {
+          email: this.email,
+          password: this.password,
+        });
+      } catch (error) {
+        this.error = error.message;
+      }
       this.email = '';
       this.password = '';
       this.confirmPassword = '';
+      this.isLoading = false;
+    },
+    handleError() {
+      this.error = null;
     },
   },
 };
