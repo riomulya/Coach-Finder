@@ -95,6 +95,9 @@ export default {
           email: this.email,
           password: this.password,
         });
+
+        const redirectUrl = '/' + (this.$route.query.redirect || 'coaches');
+        this.$router.replace(redirectUrl);
       } catch (error) {
         this.error = error.message;
       }
@@ -113,6 +116,7 @@ export default {
         this.password !== this.confirmPassword
       ) {
         this.formIsValid = false;
+        this.isLoading = false;
         return;
       }
       try {
