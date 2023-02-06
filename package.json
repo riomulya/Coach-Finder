@@ -1,5 +1,6 @@
 {
   "name": "vue-first-app",
+  "author":"Rio Mulya Syawal",
   "version": "0.1.0",
   "private": true,
   "scripts": {
